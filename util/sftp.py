@@ -1,16 +1,21 @@
-import paramiko
-import pywildcard
 import os
 
+import paramiko
+import pywildcard
 
-class SFTPClient():
+
+class SFTPClient:
 
     def __init__(self, host_config):
         self.host_config = host_config
+        self.transport = paramiko.Transport((host_config['hostname'], host_config['port']))
+        self.local_path = ''
+        self.remote_path = ''
+        self.client = None
 
     def sftp(self):
-        self.transport = paramiko.Transport(('192.168.158.131', 22))
-        self.transport.connect(username='root', password='hadoop')
+        self.transport.connect(username=self.host_config['username'],
+                               password=self.host_config['password'])
         self.client = paramiko.SFTPClient.from_transport(self.transport)
         return self
 
@@ -43,7 +48,7 @@ class SFTPClient():
         return self
 
     def mget(self, pattern):
-        files = self.client.lstat(self.client.getcwd())
+        files = self.client.listdir(self.client.getcwd())
         matched_files = pywildcard.filter(files, pattern)
         for file in matched_files:
             self.get(file)
@@ -51,3 +56,5 @@ class SFTPClient():
 
     def bye(self):
         self.transport.close()
+
+

@@ -1,0 +1,14 @@
+host_config:
+
+deployment_sequence:
+    upload:
+        remote_path:/opt/repo/image/
+        local_path:d:/opt/sicarius.tar
+    publish:
+        docker stop sicarius
+        docker rm sicarius
+        docker rmi sicarius
+        docker load < sicarius.tar
+        docker run -d -p 8080:8000 --name sicarius sicarius --restart=always
+validate:
+    docker container list|grep sicarius
