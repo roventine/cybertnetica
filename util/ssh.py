@@ -31,11 +31,3 @@ class SSHClient:
     def exit(self):
         self.client.close()
 
-
-host_config ={
-    'hostname':'122.112.155.31',
-    'port':'9022',
-    'username':'root',
-    'password':'Knownofear!'
-}
-SSHClient(host_config).ssh().shell('docker info').exit()
