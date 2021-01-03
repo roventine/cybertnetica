@@ -2,8 +2,8 @@ from enum import Enum
 import yaml
 import json
 
-from util.sftp import SFTPClient
-from util.ssh import SSHClient
+
+import controller.remote_controller as rc
 
 
 class DeployType(Enum):
@@ -13,10 +13,9 @@ class DeployType(Enum):
 
 class DeployConfig:
 
-
-    def __init__(self,config):
-        self.host_config = config['host_config']
-
+    def __init__(self, config):
+        self.host_config_list = config['host_config_list']
+        self.task_list = config['task_list']
 
     def to_string(self):
         return json.dump(self)
@@ -33,29 +32,18 @@ class DeployConfig:
             return DeployConfig(config)
 
 
-
 class SimpleDeployer():
 
     def __init__(self, deploy_config: DeployConfig):
-        self.host_config = deploy_config.host_config
-        self.sftp_client = SFTPClient(host_config=self.host_config)
-        self.ssh_client = SSHClient(host_config=self.host_config)
+        self.host_config_list = deploy_config.host_config_list
+        self.task_list = deploy_config.task_list
 
-    def upload(self):
-        self.upload()
+    def deploy_width_first(self):
+        group_controller = rc.GroupController(self.host_config_list)
+        for task in self.task_list:
+            group_controller.set_task(task).execute_in_sequence()
 
-    def deploy(self):
-        self.sftp_client.sftp() \
-            .cd('') \
-            .lcd('') \
-            .put() \
-            .bye()
-
-        self.ssh_client.ssh() \
-            .shell() \
-            .shell() \
-            .exit()
-        return self
-
-    def validate(self):
-        return self
+    def deploy_depth_first(self):
+        for host_config in self.host_config_list:
+            for task in self.task_list:
+                rc.RemoteController(host_config).execute(task)
