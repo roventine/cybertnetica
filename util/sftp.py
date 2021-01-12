@@ -2,6 +2,7 @@ import os
 
 import paramiko
 import pywildcard
+# from util.logger import logger
 
 
 class SFTPClient:
@@ -16,6 +17,7 @@ class SFTPClient:
     def sftp(self):
         self.transport.connect(username=self.host_config['username'],
                                password=self.host_config['password'])
+        # logger.info('sftp to [{1}]'.format(self.host_config['hostname']))
         self.client = paramiko.SFTPClient.from_transport(self.transport)
         return self
 
@@ -29,12 +31,14 @@ class SFTPClient:
         return self
 
     def put(self, file):
+        # logger.info('put [{0}].[{1}] to [{2}]'.format(self.local_path,file,self.remote_path))
         if self.local_path:
             local_file = '{0}/{1}'.format(self.local_path, file)
         self.client.put(local_file, file)
         return self
 
     def get(self, file):
+        # logger.info('get [{0}].[{1}] to [{2}]'.format(self.remote_path,file,self.local_path))
         if self.local_path:
             local_file = '{0}/{1}'.format(self.local_path, file)
         self.client.get(file, local_file)
@@ -55,6 +59,7 @@ class SFTPClient:
         return self
 
     def bye(self):
+        # logger.info('bye to [{1}]'.format(self.host_config['hostname']))
         self.transport.close()
 
 
