@@ -49,7 +49,6 @@ class SimpleDeployer:
                 r = SimpleController().set_host_config(host_config) \
                     .set_task(task) \
                     .execute()
-                print(r)
                 self.result_list.append(r)
         return self
 
@@ -59,14 +58,13 @@ class SimpleDeployer:
                 r = SimpleController().set_host_config(host_config) \
                     .set_task(task) \
                     .execute()
-                print(r)
                 self.result_list.append(r)
         return self
 
 
-if __name__ == '__main__':
-    config = DeployConfig.of_yaml('sicarius.yaml')
-    print(len(config.task_list))
-    deployer = SimpleDeployer(config)
-    result = deployer.deploy_width_first().result_list
-    print(result)
+# if __name__ == '__main__':
+#     config = DeployConfig.of_yaml('sicarius.yaml')
+#     print(len(config.task_list))
+#     deployer = SimpleDeployer(config)
+#     result = deployer.deploy_width_first().result_list
+#     print(result)
